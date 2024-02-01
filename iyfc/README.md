@@ -1,13 +1,18 @@
 #  🤖 iyfc-fhe-translator ⌨️
+
 IYFC is a transpiler designed for homomorphic encryption algorithm libraries, covering mainstream libraries such as [Microsoft SEAL](https://github.com/microsoft/SEAL), [OpenFHE](https://github.com/openfheorg/openfhe-development), and [Concrete](https://github.com/zama-ai/concrete). 
 IYFC introduces a user-friendly interface, providing a more accessible experience for both cryptography experts and non-experts. Additionally, IYFC integrates an intelligent decision-making module that automatically assesses user requirements, recommends the most suitable homomorphic encryption library for a given scenario, and considers factors such as performance, security, and usability.
 
-Furthermore, IYFC facilitates convenient comparative query capabilities for users through the implementation of logical operators like polynomial-simulated comparison query operators. 
+Furthermore, IYFC facilitates convenient comparative query capabilities for users through the implementation of logical operators like polynomial-simulated comparison query operators.
+
 Particularly, a sub-project of IYFC rewrites the SEAL library using CUDA to accelerate the homomorphic encryption process, with plans for the open-source release of the SEAL-GPU sub-project.
-By simplifying the implementation, library selection, and parameter configuration processes, IYFC empowers users to harness the capabilities of homomorphic encryption without being hindered by the complexities associated with existing libraries. 
+
+By simplifying the implementation, library selection, and parameter configuration processes, IYFC empowers users to harness the capabilities of homomorphic encryption without being hindered by the complexities associated with existing libraries.
+
 Our framework represents a significant step toward the broader adoption of homomorphic encryption in real-world applications, fostering a more secure and privacy-preserving computational environment.
 
-For a quick start, please refer to [Quick Start](# Quick Start). 
+For a quick start, please refer to [Quick Start](# Quick Start).
+
 For a detailed understanding of project dependencies, please refer to [Detailed Installation Steps](# Detailed Installation Steps).
 
 ## 🔥 News
@@ -17,17 +22,20 @@ For a detailed understanding of project dependencies, please refer to [Detailed 
 ## Quick Start
 
 ### Basic Compilation Environment Requirements
-Linux	Clang++ (>= 5.0) or GNU G++ (>= 6.0), CMake (>= 3.13)
+
+Linux Clang++ (>= 5.0) or GNU G++ (>= 6.0), CMake (>= 3.13)
 
 ### Quick Start in CPU Environment
 
 For the initial setup, sudo command privileges are required. The one-click installation of dependencies is available (refer to the detailed installation steps for specific dependency information).
 
+```shell
 mkdir build
 cd build
 cmake .. -DIYFC_BUILD_DEPS=ON -DAUTO_BUILD_FFT=ON -DAUTO_INSTALL_CARGO=ON -DAUTO_INSTALL_OPENMP=ON -DIYFC_BUILD_TESTS=OFF
 make 
 make install
+```
 
 ### CMakeLists for User
 
@@ -37,6 +45,7 @@ target_link_libraries(your_test IYFC::iyfc )
 ```
 
 ### Quick Start in GPU Environment
+
 For GPU environments, it is recommended to use the provided Dockerfile directly. 
 The GPU_SEAL code is open source, with plans underway.
 
@@ -234,8 +243,6 @@ decryptOutput(dag, outputs);
 releaseDag(dag);
 ```
 
-
-
 ## 📌 TODO
 
 - [ ] Open Source Plan for SEAL-GPU Library
@@ -245,10 +252,3 @@ releaseDag(dag);
 Our project is related to [Microsoft SEAL](https://github.com/microsoft/SEAL), [OpenFHE](https://github.com/openfheorg/openfhe-development), and [Concrete](https://github.com/zama-ai/concrete), [EVA](https://github.com/microsoft/EVA/tree/main/eva), and other similar initiatives. SEAL, OPENFHE, and CONCRETE have provided us with standard homomorphic encryption schemes. In optimizing for the CKKS scheme within the SEAL library, we have referred to certain strategies from the EVA project. Without their contributions, our project would not have been possible. We express our gratitude for their tremendous work.
 
 ## 📎 Citation
-
-
-
-```
-...
-```
-
