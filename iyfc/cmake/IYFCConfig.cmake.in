@@ -1,0 +1,76 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+macro(iyfc_find_dependency dep)
+    find_dependency(${dep})
+    if(NOT ${dep}_FOUND)
+        if(NOT IYFC_FIND_QUIETLY)
+            message(WARNING "Could not find dependency `${dep}` required by this configuration")
+        endif()
+        set(IYFC_FOUND FALSE)
+        return()
+    endif()
+endmacro()
+
+set(IYFC_FOUND FALSE)
+set(IYFC_STATIC_FOUND FALSE)
+set(IYFC_SHARED_FOUND FALSE)
+set(IYFC_VERSION @IYFC_VERSION@)
+set(IYFC_VERSION_MAJOR @IYFC_VERSION_MAJOR@)
+set(IYFC_VERSION_MINOR @IYFC_VERSION_MINOR@)
+set(IYFC_VERSION_PATCH @IYFC_VERSION_PATCH@)
+
+set(IYFC_CARRY_DEPS @IYFC_BUILD_DEPS@)
+
+# If IYFC does not carry dependencies, we must look for them
+if(NOT IYFC_CARRY_DEPS)
+    iyfc_find_dependency(SEAL)
+    iyfc_find_dependency(OpenFHE)
+    iyfc_find_dependency(Protobuf)
+    iyfc_find_dependency(fftw3)
+endif()
+
+# Add the current directory to the module search path
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+iyfc_find_dependency(Threads)
+
+include(${CMAKE_CURRENT_LIST_DIR}/IYFCTargets.cmake)
+
+if(TARGET IYFC::iyfc)
+    set(IYFC_FOUND TRUE)
+    set(IYFC_STATIC_FOUND TRUE)
+endif()
+
+if(TARGET IYFC::iyfc_shared)
+    set(IYFC_FOUND TRUE)
+    set(IYFC_SHARED_FOUND TRUE)
+endif()
+
+
+if(IYFC_FOUND)
+    if(NOT IYFC_FIND_QUIETLY)
+        message(STATUS "IDEA IYFC -> Version ${IYFC_VERSION} detected")
+    endif()
+    if(IYFC_DEBUG AND NOT IYFC_FIND_QUIETLY)
+        message(STATUS "Performance warning: IDEA IYFC compiled in debug mode")
+    endif()
+    set(IYFC_TARGETS_AVAILABLE "IDEA IYFC -> Targets available:")
+
+    if(IYFC_STATIC_FOUND)
+        string(APPEND IYFC_TARGETS_AVAILABLE " IYFC::iyfc")
+    endif()
+    if(IYFC_SHARED_FOUND)
+        string(APPEND IYFC_TARGETS_AVAILABLE " IYFC::iyfc_shared")
+    endif()
+    if(NOT IYFC_FIND_QUIETLY)
+        message(STATUS ${IYFC_TARGETS_AVAILABLE})
+    endif()
+else()
+    if(NOT IYFC_FIND_QUIETLY)
+        message(STATUS "IDEA IYFC -> NOT FOUND")
+    endif()
+endif()

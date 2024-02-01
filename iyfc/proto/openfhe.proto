@@ -1,0 +1,65 @@
+syntax = "proto3";
+import "iyfc.proto";
+
+package iyfc.msg;
+
+message OpenFheValuation{
+    map<string, FheObject> values = 1;
+    map<string, ConstantValue> raw_values = 3;
+}
+
+message OpenFheSecret{
+    FheObject context = 1;
+    FheObject secret_key = 2;
+
+}
+
+message OpenFhePublic{
+    FheObject context = 1;
+    FheObject public_key = 2;
+    FheObject mult_key = 3; //with context
+    FheObject automorphism_key = 4; // Used when the bootstrapping function is not included, otherwise this key needs to be serialized separately.
+    bool use_bootstrapping = 5 ;
+    uint32 final_depth     = 6;
+}
+
+message OpenFheEncodingInfo {
+    int32 input_type = 1;
+}
+
+
+message OpenFheBfvPara {
+    uint32 mult_depth           = 1;  
+    repeated int32 rotations    = 2;  
+    uint32 batch_size           = 3;   
+    uint32 scaling_mod_size     = 4;
+    uint32 plain_modulus        = 5;
+}
+
+message OpenFheSignature{
+    int32 batch_size = 1;
+    map<string, OpenFheEncodingInfo> inputs = 2;
+}
+
+
+message OpenFheCkksPara{
+    uint32 mult_depth           = 1;  
+    repeated int32 rotations    = 2;  
+    uint32 batch_size           = 3;      
+    bool need_bootstrapping     = 4;
+    uint32 scaling_mod_size     = 5;
+    uint32 first_mod_size       = 6;
+
+}
+
+
+message OpenFheAloInfo{
+    OpenFheCkksPara ckks_parameters         = 1; // ckks parameter -- required by genkeys logic
+    OpenFheBfvPara  bfv_parameters          = 2;
+
+    //通用
+    OpenFheSignature sig               = 3; // SealSignature -- required for encryption/decryption
+    OpenFhePublic openfhe_public            = 4; // public_key related information //Required for execution
+    OpenFheSecret openfhe_secret            = 5; // Optional -- required for decryption
+    OpenFheValuation openfhe_valuation      = 6; // Optional
+}

@@ -1,0 +1,64 @@
+syntax = "proto3";
+import "iyfc.proto";
+
+package iyfc.msg;
+
+message CKKSParameters {
+    repeated uint32 prime_bits = 1;
+    repeated int32 rotations = 2;
+    uint32 poly_modulus_degree = 3;
+}
+
+message SealEncodingInfo {
+    int32 input_type = 1;
+    int32 scale = 2;
+    int32 level = 3;
+}
+
+message SealSignature {
+    int32 vec_size = 1;
+    map<string, SealEncodingInfo> inputs = 2;
+}
+
+message BfvParameters {
+    repeated int32 rotations = 1;
+    uint32 poly_modulus_degree = 2;
+    uint32 plain_modulus = 3;
+}
+
+
+message SEALPublic {
+    FheObject encryption_parameters = 1;
+    FheObject public_key = 2;
+    FheObject galois_keys = 3;
+    FheObject relin_keys = 4;
+}
+
+message SEALSecret {
+    FheObject encryption_parameters = 1;
+    FheObject secret_key = 2;
+}
+
+message SEALValuation {
+    FheObject encryption_parameters = 1;
+    map<string, FheObject> values = 2;
+    map<string, ConstantValue> raw_values = 3;
+}
+
+message SealCkksInfo{
+    CKKSParameters ckks_parameters    = 1; // ckks parameter -- required by genkeys logic
+    SealSignature ckks_sig            = 2; // SealSignature -- required for encryption/decryption
+
+    SEALPublic seal_public            = 3; // public_key related information //Required for execution
+    SEALSecret seal_secret            = 4; // Optional -- required for decryption
+    SEALValuation seal_valuation      = 5; // Optional
+}
+
+message SealBfvInfo{
+    BfvParameters bfv_parameters    = 1; // bfv parameter -- required by genkeys logic
+    SealSignature bfv_sig            = 2; // SealSignature -- required for encryption/decryption
+
+    SEALPublic seal_public            = 3; // public_key related information //Required for execution
+    SEALSecret seal_secret            = 4; // Optional -- required for decryption
+    SEALValuation seal_valuation      = 5; // Optional
+}

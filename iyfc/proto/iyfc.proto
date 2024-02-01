@@ -1,0 +1,111 @@
+
+syntax = "proto3";
+package iyfc.msg;
+
+
+message FheObject {
+    // Various types of data need to be serialized separately
+    enum ObjectType {
+        UNKNOWN = 0;
+        CIPHERTEXT = 1;
+        PLAINTEXT = 2;
+        SECRET_KEY = 3;
+        PUBLIC_KEY = 4;
+
+        GALOIS_KEYS = 5;//seal only
+        RELIN_KEYS = 6; //seal only
+
+        ENCRYPTION_PARAMETERS = 7;
+        //concrete
+        UINT8_TEXT = 8;
+        
+        CONTEXT = 9; //openfhe only
+        MULTKEY = 10; //openfhe only
+        ROTKEY = 11; //openfhe only
+    }
+    ObjectType object_type = 1;
+    bytes data = 2;
+}  
+
+message Node {
+    uint32 op = 1;
+    // Absolute indices to list of terms
+    repeated uint64 operands = 2;
+    repeated Attribute attributes = 3;
+}
+
+message ConstantValue {
+    uint32 size = 1;
+    // If sparse_indices is set then values are interpreted as a sparse set of values
+    // Otherwise values is interpreted as dense with broadcasting semantics and size must divide vec_size
+    // If values is empty then the whole constant is zero
+    repeated double values = 2;
+    repeated uint32 sparse_indices = 3;
+}
+
+message ConstantInt64Value {
+    uint32 size = 1;
+    repeated int64 values = 2;
+    repeated uint32 sparse_indices = 3;
+}
+
+
+message Attribute {
+    uint32 key = 1;
+    oneof value {
+        uint32 uint32 = 2;
+        sint32 int32 = 3;
+        uint32 type = 4;
+        ConstantValue constant_value = 5;
+        ConstantInt64Value constant_int64_value = 6;
+    }
+}
+
+message NodeName {
+    uint64 node = 1;
+    string name = 2;
+}
+
+
+message AloItem{
+    string name                = 1; //ex seal_ckks
+    bytes alo_info             = 2; //optional If it is ckks -- SealCkksInfo.SerializeToString
+}
+message Alo{
+    repeated AloItem alo_items = 1;             //repeated Backup, multiple algorithm switching may be supported in the future
+}
+
+message Input{
+    bytes inputs = 1; // ex: SEALValuation.SerializeToString Serialization
+}
+
+message Output{
+    bytes outputs = 1;
+}
+
+message DagNodes{
+    string name = 1;
+    repeated Node nodes = 2;
+    repeated NodeName inputs = 3;
+    repeated NodeName outputs = 4;
+}
+message DagCommInfo{
+    uint32 dag_version = 1;
+    string name = 2;
+    uint32 vec_size = 3;
+    Alo alo = 4;
+    bool enable_bootstrap = 5;
+    uint32 after_reduction_depth = 6;
+    uint32 scale = 7;
+}
+message Dag {
+    DagCommInfo comm_info = 1;
+    DagNodes dag_nodes = 2;
+}
+
+message DagGroup{   
+    DagCommInfo comm_info = 1;
+    repeated DagNodes dags_nodes= 2;
+    repeated NodeName group_inputs = 3;
+    repeated NodeName group_outputs = 4;
+}

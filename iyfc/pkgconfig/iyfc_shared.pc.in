@@ -1,0 +1,17 @@
+# Licensed under the MIT license.
+
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${prefix}/lib
+includedir=${prefix}/@IYFC_INCLUDES_INSTALL_DIR@
+
+Name: IDEA IYFC
+Version: @IYFC_VERSION_MAJOR@.@IYFC_VERSION_MINOR@
+Description: easy-to-use 
+
+Requires: @IYFC_PKGCONFIG_SEAL_REQUIRES_STRING@
+Requires: @IYFC_PKGCONFIG_OPENFHE_REQUIRES_STRING@
+Requires: @IYFC_PKGCONFIG_CONCRETE_REQUIRES_STRING@
+Requires: @IYFC_PKGCONFIG_FFT_HEXL_REQUIRES_STRING@
+
+Libs: -L${libdir} -liyfc
+Cflags: @IYFC_LANG_FLAG@ -I${includedir}

@@ -1,0 +1,19 @@
+#
+#cmake_minimum_required(VERSION 3.16)
+#set(CMAKE_CXX_STANDARD 17)
+
+
+set(IYFC_SOURCE_FILES ${IYFC_SOURCE_FILES} 
+    ${CMAKE_CURRENT_LIST_DIR}/node.cpp  
+    ${CMAKE_CURRENT_LIST_DIR}/node_attr.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/expr.cpp 
+    ${CMAKE_CURRENT_LIST_DIR}/iyfc_dag.cpp
+)
+
+install(
+    FILES 
+    ${CMAKE_CURRENT_LIST_DIR}/expr.h
+    DESTINATION ${IYFC_INCLUDES_INSTALL_DIR}/dag
+)
+
+set(IYFC_SOURCE_FILES ${IYFC_SOURCE_FILES} PARENT_SCOPE)

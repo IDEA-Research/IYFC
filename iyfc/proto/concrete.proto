@@ -1,0 +1,22 @@
+syntax = "proto3";
+import "iyfc.proto";
+
+package iyfc.msg;
+
+message ConcreteSecret{
+    bytes client_str = 1;
+}
+
+message ConcretePublic{
+    bytes server_str = 1;
+}
+
+message ConcreteValuation{
+    map<string, FheObject> values = 1;
+}
+
+message ConcreteInfo{
+    ConcreteSecret concrete_client = 1; //rust json_str
+    ConcretePublic concrete_server = 2; //rust json_str
+    ConcreteValuation concrete_valuation = 3; //rust concrete库目前不支持shortints序列化  这里预留备用
+}
