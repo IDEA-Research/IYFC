@@ -11,9 +11,9 @@ By simplifying the implementation, library selection, and parameter configuratio
 
 Our framework represents a significant step toward the broader adoption of homomorphic encryption in real-world applications, fostering a more secure and privacy-preserving computational environment.
 
-For a quick start, please refer to [Quick Start](# Quick Start).
+For a quick start, please refer to [Quick Start](#quick-start).
 
-For a detailed understanding of project dependencies, please refer to [Detailed Installation Steps](# Detailed Installation Steps).
+For a detailed understanding of project dependencies, please refer to [Detailed Installation Steps](#detailed-installation-steps).
 
 ## 🔥 News
 
@@ -46,11 +46,10 @@ target_link_libraries(your_test IYFC::iyfc )
 
 ### Quick Start in GPU Environment
 
-For GPU environments, it is recommended to use the provided Dockerfile directly. 
+For GPU environments, it is recommended to use the provided Dockerfile directly.
 The GPU_SEAL code is open source, with plans underway.
 
-
-## 🪄 Detailed Installation Steps
+## Detailed Installation Steps
 
 ### 1. protobuf
 
