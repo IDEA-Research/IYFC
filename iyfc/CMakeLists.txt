@@ -96,6 +96,11 @@ set(IYFC_BUILD_DEPS_OPTION_STR "Automatically download and build unmet dependenc
 option(IYFC_BUILD_DEPS ${IYFC_BUILD_DEPS_OPTION_STR} OFF)
 message(STATUS "IYFC_BUILD_DEPS: ${IYFC_BUILD_DEPS}")
 
+set(IYFC_INSTALL_BUILD_DEPS_STR "Automatically install unmet dependencies")
+option(IYFC_INSTALL_BUILD_DEPS ${IYFC_INSTALL_BUILD_DEPS} OFF)
+message(STATUS "IYFC_INSTALL_BUILD_DEPS: ${IYFC_INSTALL_BUILD_DEPS}")
+
+
 if(IYFC_BUILD_DEPS)
     include(FetchContent)
     mark_as_advanced(FETCHCONTENT_BASE_DIR)
@@ -120,9 +125,19 @@ if(GPU_SUPPORT)
 endif()
 
 # build seal 
+
 if(IYFC_BUILD_DEPS AND NOT GPU_SUPPORT)
     message(STATUS "Microsoft Seal: download ...")
     iyfc_fetch_thirdparty_content(ExternalSeal)
+    if(IYFC_INSTALL_BUILD_DEPS)
+        set(IYFC_SEAL_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/thirdparty/seal-build/lib)
+        install(
+            FILES 
+                ${IYFC_SEAL_OUTPUT_DIRECTORY}/libseal-4.0.a
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        )
+    endif()
+
 else()
     find_package(SEAL 4.0 REQUIRED)
 if(NOT SEAL_FOUND)
@@ -138,6 +153,18 @@ endif()
 if(IYFC_BUILD_DEPS)
     message(STATUS "openfhe: download ...")
     iyfc_fetch_thirdparty_content(ExternalOpenFHE)
+    #install deps
+    if(IYFC_INSTALL_BUILD_DEPS)
+        set(IYFC_OPENFHE_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib)
+        install(
+            FILES 
+                ${IYFC_OPENFHE_OUTPUT_DIRECTORY}/libOPENFHEpke_static.a
+                ${IYFC_OPENFHE_OUTPUT_DIRECTORY}/libOPENFHEcore_static.a
+                ${IYFC_OPENFHE_OUTPUT_DIRECTORY}/libOPENFHEbinfhe_static.a
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        )
+    endif()
+
 else()
     find_package(OpenFHE)
 if(NOT OpenFHE_FOUND)
@@ -287,7 +314,11 @@ if(NOT IYFC_BUILD_SHARED)
         target_link_libraries(iyfc PUBLIC SEAL::seal) #gpu_seal
     endif()
     if(IYFC_BUILD_DEPS)
-        target_link_libraries(iyfc PRIVATE  OPENFHEpke_static;OPENFHEcore_static;OPENFHEbinfhe_static )
+        add_dependencies(iyfc  OPENFHEpke_static;OPENFHEcore_static;OPENFHEbinfhe_static )
+        target_link_libraries(iyfc PRIVATE  ${CMAKE_BINARY_DIR}/lib/libOPENFHEpke_static.a
+                                            ${CMAKE_BINARY_DIR}/lib/libOPENFHEcore_static.a
+                                            ${CMAKE_BINARY_DIR}/lib/libOPENFHEbinfhe_static.a
+        )
         target_link_libraries(iyfc PUBLIC  fftw3)
         target_link_libraries(iyfc PRIVATE  ${CMAKE_BINARY_DIR}/libprotobuf.a)
         target_include_directories(iyfc PUBLIC $<BUILD_INTERFACE:${openfhe_SOURCE_DIR}/src/pke/include/>)
@@ -297,12 +328,12 @@ if(NOT IYFC_BUILD_SHARED)
         target_include_directories(iyfc PUBLIC $<BUILD_INTERFACE:${openfhe_SOURCE_DIR}/third-party/cereal/include/>)
         target_include_directories(iyfc PUBLIC $<BUILD_INTERFACE:${self_protobuf_SOURCE_DIR}/src>)
         if(NOT GPU_SUPPORT)
-            target_link_libraries(iyfc PRIVATE  seal)
+            add_dependencies(iyfc  seal)
+            target_link_libraries(iyfc PRIVATE  ${CMAKE_BINARY_DIR}/thirdparty/seal-build/lib/libseal-4.0.a)
             target_include_directories(iyfc PUBLIC $<BUILD_INTERFACE:${seal_SOURCE_DIR}/native/src>)
             target_include_directories(iyfc PUBLIC $<BUILD_INTERFACE:${seal_BINARY_DIR}/native/src>)
             target_include_directories(iyfc PUBLIC $<BUILD_INTERFACE:${seal_BINARY_DIR}/thirdparty/msgsl-src/include>)
         endif()
-
     else()
         target_link_libraries(iyfc PUBLIC SEAL::seal)
         target_link_libraries(iyfc PUBLIC protobuf::libprotobuf)
@@ -332,7 +363,11 @@ else()
     dl
     )
     if(IYFC_BUILD_DEPS)
-        target_link_libraries(iyfc_shared PRIVATE  OPENFHEpke_static;OPENFHEcore_static;OPENFHEbinfhe_static )
+        target_link_libraries(iyfc_shared PRIVATE  OPENFHEpke_static;OPENFHEcore_static;OPENFHEbinfhe_static)
+        target_link_libraries(iyfc PRIVATE  ${CMAKE_BINARY_DIR}/lib/libOPENFHEpke_static.a
+                                            ${CMAKE_BINARY_DIR}/lib/libOPENFHEcore_static.a
+                                            ${CMAKE_BINARY_DIR}/lib/libOPENFHEbinfhe_static.a
+        )
         target_link_libraries(iyfc_shared PUBLIC  fftw3)
         target_link_libraries(iyfc_shared PRIVATE  ${CMAKE_BINARY_DIR}/libprotobuf.a)
         target_include_directories(iyfc_shared PUBLIC $<BUILD_INTERFACE:${openfhe_SOURCE_DIR}/src/pke/include/>)
@@ -343,6 +378,7 @@ else()
         target_include_directories(iyfc_shared PUBLIC $<BUILD_INTERFACE:${self_protobuf_SOURCE_DIR}/src>)
         if(NOT GPU_SUPPORT)
             target_link_libraries(iyfc_shared PRIVATE  seal)
+            target_link_libraries(iyfc_shared PRIVATE  ${CMAKE_BINARY_DIR}/thirdparty/seal-build/lib/libseal-4.0.a)
             target_include_directories(iyfc_shared PUBLIC $<BUILD_INTERFACE:${seal_SOURCE_DIR}/native/src>)
             target_include_directories(iyfc_shared PUBLIC $<BUILD_INTERFACE:${seal_BINARY_DIR}/native/src>)
             target_include_directories(iyfc_shared PUBLIC $<BUILD_INTERFACE:${seal_BINARY_DIR}/thirdparty/msgsl-src/include>)
@@ -354,7 +390,6 @@ else()
         target_link_libraries(iyfc_shared PUBLIC ${OpenFHE_STATIC_LIBRARIES})
     endif()
 endif()
-
 
 # Add standard alias
 if(TARGET iyfc)
@@ -426,7 +461,6 @@ if(EXISTS ${IYFC_PKGCONFIG_SHARED_FILENAME})
         FILES ${IYFC_PKGCONFIG_SHARED_FILENAME}
         DESTINATION ${IYFC_PKGCONFIG_INSTALL_DIR})
 endif()
-
 
 
 ##################

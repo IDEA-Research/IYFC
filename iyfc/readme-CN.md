@@ -28,7 +28,7 @@ Linux Clang++ (>= 5.0) or GNU G++ (>= 6.0), CMake (>= 3.13)
 ```shell
 mkdir build
 cd build
-cmake .. -DIYFC_BUILD_DEPS=ON -DAUTO_BUILD_FFT=ON -DAUTO_INSTALL_CARGO=ON -DAUTO_INSTALL_OPENMP=ON -DIYFC_BUILD_TESTS=OFF
+cmake .. -DIYFC_BUILD_DEPS=ON -DAUTO_BUILD_FFT=ON -DAUTO_INSTALL_CARGO=ON -DAUTO_INSTALL_OPENMP=ON -DIYFC_INSTALL_BUILD_DEPS=ON -DIYFC_BUILD_TESTS=OFF
 make 
 make install
 ```
@@ -36,6 +36,9 @@ make install
 ### 使用时CMakeLists
 
 ```shell
+#find_package(SEAL REQUIRED) # 自行安装第三方库时需要
+#find_package(OpenFHE REQUIRED) # 自行安装第三方库时需要
+find_package(OpenMP REQUIRED)
 find_package(IYFC REQUIRED)
 target_link_libraries(your_test IYFC::iyfc )
 ```

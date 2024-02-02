@@ -32,7 +32,7 @@ For the initial setup, sudo command privileges are required. The one-click insta
 ```shell
 mkdir build
 cd build
-cmake .. -DIYFC_BUILD_DEPS=ON -DAUTO_BUILD_FFT=ON -DAUTO_INSTALL_CARGO=ON -DAUTO_INSTALL_OPENMP=ON -DIYFC_BUILD_TESTS=OFF
+cmake .. -DIYFC_BUILD_DEPS=ON -DAUTO_BUILD_FFT=ON -DAUTO_INSTALL_CARGO=ON -DAUTO_INSTALL_OPENMP=ON -DIYFC_INSTALL_BUILD_DEPS=ON -DIYFC_BUILD_TESTS=OFF
 make 
 make install
 ```
@@ -40,7 +40,10 @@ make install
 ### CMakeLists for User
 
 ```shell
+#find_package(SEAL REQUIRED) # When installing a third-party library manuall
+#find_package(OpenFHE REQUIRED) # When installing a third-party library manuall
 find_package(IYFC REQUIRED)
+find_package(OpenMP REQUIRED)
 target_link_libraries(your_test IYFC::iyfc )
 ```
 
