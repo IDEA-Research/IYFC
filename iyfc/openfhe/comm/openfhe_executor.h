@@ -64,21 +64,21 @@ namespace iyfc {
     return;
 
 /**
- * @class OpenfheExecutor 执行类
- * @brief 遍历执行图节点
+ * @class OpenfheExecutor execution class
+ * @brief Traverse and execute graph nodes
  */
 template <typename T>
 class OpenfheExecutor {
  public:
   using RuntimeValue = std::variant<OpenFheCiphertext, OpenFhePlaintext,
-                                    std::vector<T>>;  // 执行包含的数据类型
+                                    std::vector<T>>;  
 
   Dag &dag;
   OpenFheContext context;  // context
 
   NodeMapOptional<RuntimeValue> m_objects;
   bool m_has_err{false};
-  uint32_t m_final_depth;  // 乘法深度
+  uint32_t m_final_depth;  // Multiplication depth
   std::vector<T> temp_vec;
 
   bool isCipher(const NodePtr &t) {
@@ -92,7 +92,7 @@ class OpenfheExecutor {
   }
 
   /**
-   * @brief 原始数据vector右移
+   * @brief Right shift of the original data vector
    */
   void rightRotateRaw(std::vector<T> &out, const NodePtr &args1,
                       std::int32_t shift) {
@@ -108,7 +108,7 @@ class OpenfheExecutor {
   }
 
   /**
-   * @brief 原始数据vector左移
+   * @brief Left shift of the original data vector
    */
   void leftRotateRaw(std::vector<T> &out, const NodePtr &args1,
                      std::int32_t shift) {
@@ -124,7 +124,7 @@ class OpenfheExecutor {
   }
 
   /**
-   * @brief 对节点中原始数据类型处理函数
+   * @brief Processing functions for primitive data types in nodes
    */
   template <class OpType>
   void binOpRaw(std::vector<T> &out, const NodePtr &args1,
@@ -142,22 +142,21 @@ class OpenfheExecutor {
   }
 
   /**
-   * @brief raw节点数据取negate
+   * @brief Negate the raw node data
    */
   void negateRaw(std::vector<T> &out, const NodePtr &args1) {
     auto &in = std::get<std::vector<T>>(m_objects.at(args1));
 
     out.clear();
     out.reserve(in.size());
-    // constexpr 表达式
     transform(in.cbegin(), in.cend(), back_inserter(out), std::negate<T>());
   }
 
   /**
    * @brief add
-   * @param [out] out add 操作结果OpenFheCiphertext类型
-   * @param [in] args1 左操作节点
-   * @param [in] args2 右操作节点
+   * @param [out] out The result of the addition operation is of type OpenFheCiphertext
+   * @param [in] args1 Left operand node
+   * @param [in] args2 Right operand node
    */
   void add(OpenFheCiphertext &output, const NodePtr &args1,
            const NodePtr &args2) {
@@ -185,9 +184,9 @@ class OpenfheExecutor {
 
   /**
    * @brief sub
-   * @param [out] out sub 操作结果OpenFheCiphertext类型
-   * @param [in] args1 左操作节点
-   * @param [in] args2 右操作节点
+   * @param [out] out The result of the subtraction operation is of type OpenFheCiphertext
+   * @param [in] args1 Left operand node
+   * @param [in] args2 Right operand node
    */
   void sub(OpenFheCiphertext &output, const NodePtr &args1,
            const NodePtr &args2) {
@@ -208,9 +207,9 @@ class OpenfheExecutor {
 
   /**
    * @brief plain_sub
-   * @param [out] out sub 操作结果OpenFheCiphertext类型
-   * @param [in] args1 左操作节点 明文节点
-   * @param [in] args2 右操作节点
+   * @param [out] out The result of the subtraction operation is of type OpenFheCiphertext
+   * @param [in] args1 The left operand node is a plaintext node
+   * @param [in] args2 Right operand node
    */
   void plain_sub(OpenFheCiphertext &output, const NodePtr &args1,
                  const NodePtr &args2) {
@@ -232,9 +231,9 @@ class OpenfheExecutor {
 
   /**
    * @brief mul
-   * @param [out] out mul 操作结果OpenFheCiphertext类型
-   * @param [in] args1 左操作节点
-   * @param [in] args2 右操作节点
+   * @param [out] out The result of the multiplication operation is of type OpenFheCiphertext
+   * @param [in] args1 Left operand node
+   * @param [in] args2 Right operand node
    */
   void mul(OpenFheCiphertext &output, const NodePtr &args1,
            const NodePtr &args2) {
@@ -259,10 +258,11 @@ class OpenfheExecutor {
 
               if (dag.m_enable_bootstrap) {
                 uint32_t cur_level = output->GetLevel();
-                // 情况一 第一次达到 可以做的最大乘法深度
-                //  LEVELS_BEFORE_BOOTSTRAP 情况二 做过bootstraping
-                // 到最大乘法深度- 2 因为判断逻辑前预留做一次乘法
-                // 所以这里是减-2
+                /*
+                Reaching the maximum achievable multiplication depth for the first time
+                 LEVELS_BEFORE_BOOTSTRAP ： Scenario two: Bootstraping has been performed
+                 Up to the maximum multiplication depth - 2, 
+               */
                 if ((cur_level >= MAX_MULT_DEPTH_NO_BOOT &&
                      cur_level < (m_final_depth - LEVELS_BEFORE_BOOTSTRAP)) ||
                     (cur_level >= (m_final_depth - 2))) {
@@ -288,7 +288,7 @@ class OpenfheExecutor {
   }
 
   /**
-   * @brief leftRotate 密文左移
+   * @brief leftRotate ciphertext
    */
   void leftRotate(OpenFheCiphertext &output, const NodePtr &args1,
                   std::int32_t rotation) {
@@ -298,7 +298,7 @@ class OpenfheExecutor {
   }
 
   /**
-   * @brief rightRotate 密文右移
+   * @brief rightRotate ciphertext
    */
   void rightRotate(OpenFheCiphertext &output, const NodePtr &args1,
                    std::int32_t rotation) {
@@ -308,7 +308,7 @@ class OpenfheExecutor {
   }
 
   /**
-   * @brief negate 密文取negate
+   * @brief negate ciphertext
    */
   void negate(OpenFheCiphertext &output, const NodePtr &args1) {
     OpenFheCiphertext &input1 =
@@ -317,7 +317,7 @@ class OpenfheExecutor {
   }
 
   /**
-   * @brief 密文relinearize
+   * @brief relinearize ciphertext
    */
   void relinearize(OpenFheCiphertext &output, const NodePtr &args1) {
     OpenFheCiphertext &input1 =
@@ -326,7 +326,7 @@ class OpenfheExecutor {
   }
 
   /**
-   * @brief 密文rescale
+   * @brief rescale ciphertext
    */
   void rescale(OpenFheCiphertext &output, const NodePtr &args1,
                std::uint32_t divisor) {
