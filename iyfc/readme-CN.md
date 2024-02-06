@@ -137,7 +137,7 @@ setOutput(dag, "z", tmp_expr_out);
 
 e.g 2.,:
 
-📢Currently, uint3 integer is not practical and is reserved for future use. 
+📢Currently, uint3 integer is not practical and is reserved for future use.
 
 **Uint3 integer**: **(+ - * /)** Support addition, subtraction, multiplication and division.
 

@@ -347,10 +347,10 @@ class OpenfheExecutor {
 
  public:
   /**
-   * @brief OpenfheExecutor构造函数
-   * @param [in] g 执行图
+   * @brief OpenfheExecutor constructor
+   * @param [in] g execution graph
    * @param [in] ctx openfhe的context
-   * @param [in] final_depth 图优化后最终的乘法深度
+   * @param [in] final_depth Final multiplication depth after graph optimization
    */
   OpenfheExecutor(Dag &g, OpenFheContext ctx, uint32_t final_depth)
       : dag(g), context(ctx), m_objects(g), m_final_depth(final_depth) {}
@@ -358,7 +358,7 @@ class OpenfheExecutor {
   bool IsErr() { return m_has_err; }
 
   /**
-   * @brief encodeRaw 原始数据类型需要先encode
+   * @brief encodeRaw need to be encoded first
    */
   virtual int encodeRaw(OpenFhePlaintext &output, const NodePtr &args1,
                         uint32_t scale, uint32_t level) {
@@ -367,7 +367,7 @@ class OpenfheExecutor {
   }
 
   /**
-   * @brief setInputs 执行前设置输入
+   * @brief setInputs Setting input before execution
    */
   virtual void setInputs(const OpenFheValuation &inputs) {
     warn("err in base setInputs");
@@ -375,7 +375,7 @@ class OpenfheExecutor {
   }
 
   /**
-   * @brief handleConstantNode 处理constant数据类型节点
+   * @brief handleConstantNode Processing constant data type nodes
    */
   virtual void handleConstantNode(const NodePtr &node) {
     warn("err in base handleConstantNode");
@@ -383,7 +383,7 @@ class OpenfheExecutor {
   }
 
   /**
-   * @brief 重载()遍历图中节点执行
+   * @brief Overload () to traverse and execute nodes in the graph
    */
   void operator()(const NodePtr &node) {
     if (logLevelLeast(LOGLEVEL::Trace)) {
@@ -562,8 +562,8 @@ class OpenfheExecutor {
 };
 
 /**
- * @class CkksOpenFheExecutor 具体ckks算法执行类 继承OpenfheExecutor
- * @brief 需要重写函数  encodeRaw setInputs handleConstantNode
+ * @class CkksOpenFheExecutor :Specific CKKS algorithm execution class inherits from OpenfheExecutor
+ * @brief Function needs to be rewritten:  encodeRaw setInputs handleConstantNode
  */
 
 class CkksOpenFheExecutor : public OpenfheExecutor<double> {
@@ -606,8 +606,8 @@ class CkksOpenFheExecutor : public OpenfheExecutor<double> {
 };
 
 /**
- * @class BfvOpenfheExecutor 具体bfv算法执行类 继承OpenfheExecutor
- * @brief 需要重写函数  encodeRaw setInputs handleConstantNode
+ * @class BfvOpenfheExecutor :Specific BFV algorithm execution class inherits from OpenfheExecutor
+ * @brief Function needs to be rewritten: encodeRaw setInputs handleConstantNode
  */
 class BfvOpenfheExecutor : public OpenfheExecutor<int64_t> {
  public:
@@ -617,7 +617,7 @@ class BfvOpenfheExecutor : public OpenfheExecutor<int64_t> {
   int encodeRaw(OpenFhePlaintext &output, const NodePtr &args1, uint32_t scale,
                 uint32_t level) {
     auto &in = std::get<std::vector<int64_t>>(m_objects.at(args1));
-    // todo 确认openfhe encode参数意义
+   
     output = context->MakePackedPlaintext(in);
     return 0;
   }

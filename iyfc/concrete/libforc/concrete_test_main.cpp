@@ -1,6 +1,6 @@
 
 /*
- * c调用rust测试
+ * C Calling Rust Test
  * MIT License
  * Copyright 2023 The IDEA Authors. All rights reserved.
  * Permission is hereby granted, free of charge, to any person obtaining a copy

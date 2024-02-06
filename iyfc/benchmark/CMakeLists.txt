@@ -45,10 +45,7 @@ if(IYFC_BUILD_BENCH)
     endif()
 
     add_executable(iyfcbench)
-    # If we're targeting WASM, add the appropriate link flags
-    if(EMSCRIPTEN)
-        set_target_properties(iyfcbench PROPERTIES LINK_FLAGS "-flto -O3 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4GB")
-    endif()
+
     target_sources(iyfcbench
         PRIVATE
             ${CMAKE_CURRENT_LIST_DIR}/bench.cpp
