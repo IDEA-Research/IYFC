@@ -18,6 +18,16 @@ For a detailed understanding of project dependencies, please refer to [Detailed 
 ## 🔥 News
 
 - **`2024/2/2`**: first commit~
+- **`2024/2/6`**: add Dockerfile~
+## Using Docker 
+Simple and easy to use, you can use the following command to build the docker image and run the container.
+
+```shell
+docker build -t iyfc .
+docker run -it iyfc
+```
+Or, you can find the docker images satified with our project in [Docker Hub](https://hub.docker.com/repository/docker/ray96/fhe_gpu).
+
 
 ## Quick Start
 
